@@ -34,12 +34,14 @@ fn main() {
         letter_display.push(' ');
     }
 
-    println!();
-    println!("Good morning!");
-    println!();
-    println!("Your 20 letters for today are:");
-    println!("{letter_display}");
-    println!();
+    println!(
+        "
+Good morning!
+
+Your 20 letters for today are:
+{letter_display}
+    "
+    );
 
     // Map characters to Scrabble points values
     let scrabble_points: HashMap<char, i32> = HashMap::from([
