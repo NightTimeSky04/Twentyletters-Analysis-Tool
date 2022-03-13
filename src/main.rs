@@ -22,7 +22,7 @@ fn main() {
     }
 
     // Are all characters provided valid Scrabble characters?
-    for letter in letters_vector.iter() {
+    for letter in &letters_vector {
         if !letter.is_ascii_alphabetic() {
             panic!("Provide valid Scrabble characters");
         }
@@ -31,7 +31,7 @@ fn main() {
     // Display verified 20 letter input to user
     let mut letter_display = String::new();
 
-    for letter in letters_vector.iter() {
+    for letter in &letters_vector {
         letter_display.push(*letter);
         letter_display.push(' ');
     }
@@ -78,7 +78,7 @@ fn main() {
     // Create vector of relevant Scrabble points values
     let mut points_vector = Vec::new();
 
-    for letter in letters_vector.iter() {
+    for letter in &letters_vector {
         points_vector.push(*scrabble_points.get(letter).unwrap());
     }
 
@@ -105,7 +105,7 @@ fn main() {
     // This assumes no more than 2 words in the solution
     let first_word_length = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
 
-    for first_word_length in first_word_length.iter() {
+    for first_word_length in &first_word_length {
         let second_word_length = 20 - first_word_length;
         let first_word_points_iter = *first_word_length..(first_word_length + points_over_min + 1);
 
