@@ -91,9 +91,11 @@ Your 20 letters for today are:
     // Take user input of maximum score for the day
     let max_score = 353;
 
-    println!("Today's maximum score is: {max_score}");
-    println!();
-    println!();
+    println!(
+        "Today's maximum score is: {max_score}
+    
+    "
+    );
 
     // Create empty vector to store possible combinations in
     let mut combinations_vector: Vec<Combination> = Vec::new();
