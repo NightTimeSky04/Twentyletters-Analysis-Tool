@@ -30,11 +30,9 @@ fn main() {
     let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
 
     for letter in &letters_vector {
-        letter_display.push(*letter);
+        letter_display.push(letter.to_ascii_uppercase());
         letter_display.push(' ');
     }
-
-    letter_display = letter_display.to_uppercase();
 
     println!();
     println!("Good morning!");
