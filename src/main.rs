@@ -102,9 +102,9 @@ Your 20 letters for today are:
 
     // Find length and points combinations equal to maximum score, by iterating over all possible combinations of word lengths and points
     // This assumes no more than 2 words in the solution
-    let first_word_length = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
+    let first_word_lengths = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
 
-    for first_word_length in &first_word_length {
+    for first_word_length in &first_word_lengths {
         let second_word_length = 20 - first_word_length;
         let first_word_points_iter = *first_word_length..(first_word_length + points_over_min + 1);
 
