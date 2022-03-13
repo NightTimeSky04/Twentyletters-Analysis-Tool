@@ -134,23 +134,23 @@ Your 20 letters for today are:
     );
     println!();
 
-    for combination_with_index in combinations_vector.iter().enumerate() {
+    for (index, combination) in combinations_vector.iter().enumerate() {
         println!(
             "{} letters worth {} points (scoring {})",
-            combination_with_index.1.first_word_length,
-            combination_with_index.1.first_word_points,
-            combination_with_index.1.first_word_length * combination_with_index.1.first_word_points
+            combination.first_word_length,
+            combination.first_word_points,
+            combination.first_word_length * combination.first_word_points
         );
         println!("and");
         println!(
             "{} letters worth {} points (scoring {})",
-            combination_with_index.1.second_word_length,
-            combination_with_index.1.second_word_points,
-            combination_with_index.1.second_word_length
-                * combination_with_index.1.second_word_points
+            combination.second_word_length,
+            combination.second_word_points,
+            combination.second_word_length * combination.second_word_points
         );
         println!();
-        if combination_with_index.0 != combinations_vector.len() - 1 {
+
+        if index != combinations_vector.len() - 1 {
             println!("OR");
             println!();
         }
