@@ -104,9 +104,9 @@ Your 20 letters for today are:
     // This assumes no more than 2 words in the solution
     let first_word_lengths = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
 
-    for first_word_length in &first_word_lengths {
+    for first_word_length in first_word_lengths {
         let second_word_length = 20 - first_word_length;
-        let first_word_points_iter = *first_word_length..=(first_word_length + points_over_min);
+        let first_word_points_iter = first_word_length..=(first_word_length + points_over_min);
 
         for first_word_points in first_word_points_iter {
             let second_word_points = 20 + points_over_min - first_word_points;
@@ -116,7 +116,7 @@ Your 20 letters for today are:
             if total_score == max_score {
                 // Store possible maximum score combinations as instances of `Combination` in a vector
                 let possible_combination = Combination {
-                    first_word_length: *first_word_length,
+                    first_word_length,
                     first_word_points,
                     second_word_length,
                     second_word_points,
