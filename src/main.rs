@@ -22,10 +22,8 @@ fn main() {
     }
 
     // Are all characters provided valid Scrabble characters?
-    for letter in &letters_vector {
-        if !letter.is_ascii_alphabetic() {
-            panic!("Provide valid Scrabble characters");
-        }
+    if !letters_vector.iter().all(char::is_ascii_alphabetic) {
+        panic!("Provide valid Scrabble characters");
     }
 
     // Display verified 20 letter input to user
