@@ -106,7 +106,7 @@ Your 20 letters for today are:
 
     for first_word_length in &first_word_lengths {
         let second_word_length = 20 - first_word_length;
-        let first_word_points_iter = *first_word_length..(first_word_length + points_over_min + 1);
+        let first_word_points_iter = *first_word_length..=(first_word_length + points_over_min);
 
         for first_word_points in first_word_points_iter {
             let second_word_points = 20 + points_over_min - first_word_points;
