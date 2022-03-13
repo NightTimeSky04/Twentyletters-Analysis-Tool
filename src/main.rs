@@ -74,11 +74,10 @@ Your 20 letters for today are:
     ]);
 
     // Create vector of relevant Scrabble points values
-    let mut points_vector = Vec::new();
-
-    for letter in &letters_vector {
-        points_vector.push(*scrabble_points.get(letter).unwrap());
-    }
+    let points_vector: Vec<_> = letters_vector
+        .iter()
+        .map(|letter| scrabble_points.get(letter).unwrap())
+        .collect();
 
     /*
     println!("The corresponding Scrabble points values are:");
