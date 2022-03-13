@@ -7,7 +7,6 @@ struct Combination {
 }
 
 fn main() {
-
     use std::collections::HashMap;
 
     // Take user input, e.g. letters separated by spaces
@@ -36,6 +35,7 @@ fn main() {
         letter_display.push(*letter);
         letter_display.push(' ');
     }
+
     letter_display = letter_display.to_uppercase();
 
     println!();
@@ -75,7 +75,6 @@ fn main() {
         ('z', 10),
     ]);
 
-
     // Create vector of relevant Scrabble points values
     let mut points_vector = Vec::new();
 
@@ -92,7 +91,6 @@ fn main() {
     // Find points over minimum (where minimum is 20, i.e. all letters are worth 1 point)
     let points_over_min = points_vector.iter().copied().sum::<i32>() - 20;
 
-
     // Take user input of maximum score for the day
     let max_score = 353;
 
@@ -102,7 +100,6 @@ fn main() {
 
     // Create empty vector to store possible combinations in
     let mut combinations_vector: Vec<Combination> = Vec::new();
-
 
     // Find length and points combinations equal to maximum score, by iterating over all possible combinations of word lengths and points
     // This assumes no more than 2 words in the solution
@@ -114,7 +111,8 @@ fn main() {
 
         for first_word_points in first_word_points_iter {
             let second_word_points = 20 + points_over_min - first_word_points;
-            let total_score = (first_word_length * first_word_points) + (second_word_length * second_word_points);
+            let total_score =
+                (first_word_length * first_word_points) + (second_word_length * second_word_points);
 
             if total_score == max_score {
                 // Store possible maximum score combinations as instances of `Combination` in a vector
@@ -131,18 +129,31 @@ fn main() {
     }
 
     // Display combinations found to user
-    println!("Found {} possible combinations today:", combinations_vector.len());
+    println!(
+        "Found {} possible combinations today:",
+        combinations_vector.len()
+    );
     println!();
 
     for combination_with_index in combinations_vector.iter().enumerate() {
-        println!("{} letters worth {} points (scoring {})", combination_with_index.1.first_word_length, combination_with_index.1.first_word_points, combination_with_index.1.first_word_length * combination_with_index.1.first_word_points);
+        println!(
+            "{} letters worth {} points (scoring {})",
+            combination_with_index.1.first_word_length,
+            combination_with_index.1.first_word_points,
+            combination_with_index.1.first_word_length * combination_with_index.1.first_word_points
+        );
         println!("and");
-        println!("{} letters worth {} points (scoring {})", combination_with_index.1.second_word_length, combination_with_index.1.second_word_points, combination_with_index.1.second_word_length * combination_with_index.1.second_word_points);
+        println!(
+            "{} letters worth {} points (scoring {})",
+            combination_with_index.1.second_word_length,
+            combination_with_index.1.second_word_points,
+            combination_with_index.1.second_word_length
+                * combination_with_index.1.second_word_points
+        );
         println!();
         if combination_with_index.0 != combinations_vector.len() - 1 {
             println!("OR");
             println!();
         }
     }
-
 }
