@@ -27,7 +27,7 @@ fn main() {
     }
 
     // Display verified 20 letter input to user
-    let mut letter_display = String::new();
+    let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
 
     for letter in &letters_vector {
         letter_display.push(*letter);
