@@ -1,3 +1,6 @@
+use itertools::Itertools;
+use std::collections::HashMap;
+
 // Struct to hold possible letters and points combinations
 struct Combination {
     first_word_length: i32,
@@ -6,12 +9,59 @@ struct Combination {
     second_word_points: i32,
 }
 
+// Monster method to find valid higher value letters combinations in the first (longer) word
+// Takes the vector of higher value letters and the HashMap of Scrabble points as arguments because fudge
+impl Combination {
+    fn find_higher_value_letter_combinations(&self, higher_value_letters: &Vec<&char>, scrabble_points: &HashMap<char, i32>) {
+        // Vector to hold the combinations
+        let mut higher_value_letter_combinations: Vec<Vec<&&char>> = Vec::new();
+
+        for n in 1..higher_value_letters.len() + 1 {
+            // Use Itertools to make combinations of n letters out of the set of higher value letters (0 < n <= number of higher value letters)
+            let higher_value_letters_iter = higher_value_letters.iter().combinations(n);
+    
+            // Put excess points contributions of the higher value letters in a vector and sum them
+            for letter_combination in higher_value_letters_iter {
+                let mut points_vec = Vec::new();
+        
+                for letter in letter_combination.iter() {
+                    let excess_points = *scrabble_points.get(letter).unwrap() - 1;
+                    points_vec.push(excess_points);
+                }
+        
+                let excess_sum = points_vec.iter().sum::<i32>();
+    
+                // Check excess points against points in the first word
+                if excess_sum == self.first_word_points - self.first_word_length {
+                    // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
+                    let mut i = 0;
+                    
+                    for combination in higher_value_letter_combinations.iter() {
+                        if combination == &letter_combination {
+                            i += 1
+                        }
+                    }
+
+                    // Pop new combinations in the vector!
+                    if i == 0 {
+                        higher_value_letter_combinations.push(letter_combination);
+                    }
+                }
+            }
+        }
+    
+        // Print the letter combinations for the user
+        for combination in higher_value_letter_combinations.iter() {
+            println!("{combination:?}");
+        }
+    }
+}
+
 fn main() {
-    use std::collections::HashMap;
 
     // Take user input, e.g. letters separated by spaces
     // User input not currently implemented
-    let letters = String::from("a a c d d e e e f f h i i l o p r s t u").to_lowercase();
+    let letters = String::from("a c d e e f f h h i k l l m o r t u w y").to_lowercase();
 
     // Turn input string into a vector of characters
     let letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
@@ -74,14 +124,30 @@ Your 20 letters for today are:
     ]);
 
     // Create vector of relevant Scrabble points values
+
     let points_vector: Vec<_> = letters_vector
         .iter()
         .map(|letter| scrabble_points.get(letter).unwrap())
         .collect();
+  
+    // ...and vector of letters with points value > 1
+    let mut higher_value_letters = Vec::new();
+
+    for letter in letters_vector.iter() {
+        let points = *scrabble_points.get(letter).unwrap();
+
+        if points != 1 {
+            higher_value_letters.push(letter);
+        }
+    }
 
     /*
     println!("The corresponding Scrabble points values are:");
     println!("{points_vector:?}");
+    println!();
+
+    println!("The higher value letters in this set are:");
+    println!("{higher_value_letters:?}");
     println!();
     */
 
@@ -89,7 +155,7 @@ Your 20 letters for today are:
     let points_over_min = points_vector.iter().copied().sum::<i32>() - 20;
 
     // Take user input of maximum score for the day
-    let max_score = 353;
+    let max_score = 368;
 
     println!(
         "Today's maximum score is: {max_score}
@@ -126,6 +192,7 @@ Your 20 letters for today are:
             }
         }
     }
+
 
     // Display combinations found to user
     println!(
