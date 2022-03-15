@@ -72,27 +72,26 @@ fn main() {
     }
 
     // Are all characters provided valid Scrabble characters?
-    for letter in letters_vector.iter() {
-        if !letter.is_ascii_alphabetic() {
-            panic!("Provide valid Scrabble characters");
-        }
+    if !letters_vector.iter().all(char::is_ascii_alphabetic) {
+        panic!("Provide valid Scrabble characters");
     }
 
-    // Display validated 20 letter input to user
-    let mut letter_display = String::new();
+    // Display verified 20 letter input to user
+    let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
 
-    for letter in letters_vector.iter() {
-        letter_display.push(*letter);
+    for letter in &letters_vector {
+        letter_display.push(letter.to_ascii_uppercase());
         letter_display.push(' ');
     }
-    letter_display = letter_display.to_uppercase();
 
-    println!();
-    println!("Good morning!");
-    println!();
-    println!("Your 20 letters for today are:");
-    println!("{letter_display}");
-    println!();
+    println!(
+        "
+Good morning!
+
+Your 20 letters for today are:
+{letter_display}
+    "
+    );
 
     // Map characters to Scrabble points values
     let scrabble_points: HashMap<char, i32> = HashMap::from([
@@ -124,17 +123,18 @@ fn main() {
         ('z', 10),
     ]);
 
-
     // Create vector of relevant Scrabble points values
-    let mut points_vector = Vec::new();
 
+    let points_vector: Vec<_> = letters_vector
+        .iter()
+        .map(|letter| scrabble_points.get(letter).unwrap())
+        .collect();
+  
     // ...and vector of letters with points value > 1
     let mut higher_value_letters = Vec::new();
 
     for letter in letters_vector.iter() {
         let points = *scrabble_points.get(letter).unwrap();
-
-        points_vector.push(points);
 
         if points != 1 {
             higher_value_letters.push(letter);
@@ -157,30 +157,32 @@ fn main() {
     // Take user input of maximum score for the day
     let max_score = 368;
 
-    println!("Today's maximum score is: {max_score}");
-    println!();
-    println!();
+    println!(
+        "Today's maximum score is: {max_score}
+    
+    "
+    );
 
     // Create empty vector to store possible combinations in
     let mut combinations_vector: Vec<Combination> = Vec::new();
 
     // Find length and points combinations equal to maximum score, by iterating over all possible combinations of word lengths and points
     // This assumes no more than 2 words in the solution
-    let first_word_length = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
+    let first_word_lengths = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
 
-    for first_word_length in first_word_length.iter() {
-        let second_word_length = 20 - first_word_length; // lengths of words are not independent
-        let first_word_points_iter = *first_word_length..(first_word_length + points_over_min + 1);
+    for first_word_length in first_word_lengths {
+        let second_word_length = 20 - first_word_length;
+        let first_word_points_iter = first_word_length..=(first_word_length + points_over_min);
 
         for first_word_points in first_word_points_iter {
-            let second_word_points = 20 + points_over_min - first_word_points; // points are not independent
-
-            let total_score = (first_word_length * first_word_points) + (second_word_length * second_word_points);
+            let second_word_points = 20 + points_over_min - first_word_points;
+            let total_score =
+                (first_word_length * first_word_points) + (second_word_length * second_word_points);
 
             if total_score == max_score {
                 // Store possible maximum score combinations as instances of `Combination` in a vector
                 let possible_combination = Combination {
-                    first_word_length: *first_word_length,
+                    first_word_length,
                     first_word_points,
                     second_word_length,
                     second_word_points,
@@ -191,20 +193,31 @@ fn main() {
         }
     }
 
-    // Display combinations found to user, alongside higher value letter combinations
-    println!("Found {} possible combinations today:", combinations_vector.len());
+
+    // Display combinations found to user
+    println!(
+        "Found {} possible combinations today:",
+        combinations_vector.len()
+    );
     println!();
 
-    for combination_with_index in combinations_vector.iter().enumerate() {
-        println!("{} letters worth {} points (scoring {})", combination_with_index.1.first_word_length, combination_with_index.1.first_word_points, combination_with_index.1.first_word_length * combination_with_index.1.first_word_points);
-
-        println!("with one of the following combinations of higher value letters:");
-        combination_with_index.1.find_higher_value_letter_combinations(&higher_value_letters, &scrabble_points);
-
-        println!("and {} letters worth {} points (scoring {}), with the remaining higher value letters.", combination_with_index.1.second_word_length, combination_with_index.1.second_word_points, combination_with_index.1.second_word_length * combination_with_index.1.second_word_points);
-        
+    for (index, combination) in combinations_vector.iter().enumerate() {
+        println!(
+            "{} letters worth {} points (scoring {})",
+            combination.first_word_length,
+            combination.first_word_points,
+            combination.first_word_length * combination.first_word_points
+        );
+        println!("and");
+        println!(
+            "{} letters worth {} points (scoring {})",
+            combination.second_word_length,
+            combination.second_word_points,
+            combination.second_word_length * combination.second_word_points
+        );
         println!();
-        if combination_with_index.0 != combinations_vector.len() - 1 {
+
+        if index != combinations_vector.len() - 1 {
             println!("OR");
             println!();
         }
