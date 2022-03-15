@@ -61,7 +61,7 @@ fn main() {
 
     // Take user input, e.g. letters separated by spaces
     // User input not currently implemented
-    let letters = String::from("a c d e e f f h h i k l l m o r t u w y").to_lowercase();
+    let letters = String::from("a a a b c d e e i m m m n n r r s s t y").to_lowercase();
 
     // Turn input string into a vector of characters
     let letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
@@ -90,7 +90,7 @@ Good morning!
 
 Your 20 letters for today are:
 {letter_display}
-    "
+"
     );
 
     // Map characters to Scrabble points values
@@ -131,6 +131,7 @@ Your 20 letters for today are:
         .collect();
   
     // ...and vector of letters with points value > 1
+    
     let mut higher_value_letters = Vec::new();
 
     for letter in letters_vector.iter() {
@@ -142,20 +143,21 @@ Your 20 letters for today are:
     }
 
     /*
-    println!("The corresponding Scrabble points values are:");
-    println!("{points_vector:?}");
-    println!();
+    println!(
+        "The corresponding Scrabble points values are:
+{points_vector:?}
+    ");
 
-    println!("The higher value letters in this set are:");
-    println!("{higher_value_letters:?}");
-    println!();
+    println!("The higher value letters in this set are:
+{higher_value_letters:?}
+    ");
     */
 
     // Find points over minimum (where minimum is 20, i.e. all letters are worth 1 point)
     let points_over_min = points_vector.iter().copied().sum::<i32>() - 20;
 
     // Take user input of maximum score for the day
-    let max_score = 368;
+    let max_score = 352;
 
     println!(
         "Today's maximum score is: {max_score}
@@ -208,6 +210,7 @@ Your 20 letters for today are:
             combination.first_word_points,
             combination.first_word_length * combination.first_word_points
         );
+        combination.find_higher_value_letter_combinations(&higher_value_letters, &scrabble_points);
         println!("and");
         println!(
             "{} letters worth {} points (scoring {})",
