@@ -34,16 +34,16 @@ impl Combination {
                 // Check excess points against points in the first word
                 if excess_sum == self.first_word_points - self.first_word_length {
                     // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
-                    let mut i = 0;
+                    let mut no_duplicate = true;
                     
                     for combination in higher_value_letter_combinations.iter() {
                         if combination == &letter_combination {
-                            i += 1
+                            no_duplicate = false;
                         }
                     }
 
                     // Pop new combinations in the vector!
-                    if i == 0 {
+                    if no_duplicate {
                         higher_value_letter_combinations.push(letter_combination);
                     }
                 }
