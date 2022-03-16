@@ -32,7 +32,7 @@ impl Combination {
     
                 // Check excess points against points in the first word
                 if excess_points_sum == self.first_word_points - self.first_word_length {
-                    
+
                     // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
                     let mut no_duplicate = true;
                     
@@ -77,20 +77,13 @@ fn main() {
     }
 
     // Display verified 20 letter input to user
-    let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
-
-    for letter in &letters_vector {
-        letter_display.push(letter.to_ascii_uppercase());
-        letter_display.push(' ');
-    }
-
     println!(
         "
 Good morning!
 
 Your 20 letters for today are:
-{letter_display}
-"
+{}
+", display_letters(&letters_vector)
     );
 
     // Map characters to Scrabble points values
@@ -225,4 +218,16 @@ Your 20 letters for today are:
             println!();
         }
     }
+}
+
+// Function to convert vector of chars to a string of uppercase letters separated by spaces
+fn display_letters(letters_vector: &Vec<char>) -> String {
+    let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
+
+    for letter in letters_vector {
+        letter_display.push(letter.to_ascii_uppercase());
+        letter_display.push(' ');
+    }
+
+    letter_display
 }
