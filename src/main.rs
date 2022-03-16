@@ -12,27 +12,27 @@ struct Combination {
 // Monster method to find valid higher value letters combinations in the first (longer) word
 // Takes the vector of higher value letters and the HashMap of Scrabble points as arguments because fudge
 impl Combination {
-    fn find_higher_value_letter_combinations(&self, higher_value_letters: &Vec<&char>, scrabble_points: &HashMap<char, i32>) {
+    fn find_higher_value_letter_combinations(&self, higher_value_letters: &Vec<char>, scrabble_points: &HashMap<char, i32>) {
         // Vector to hold the combinations
-        let mut higher_value_letter_combinations: Vec<Vec<&&char>> = Vec::new();
+        let mut higher_value_letter_combinations: Vec<Vec<&char>> = Vec::new();
 
-        for n in 1..higher_value_letters.len() + 1 {
+        for n in 1..=higher_value_letters.len() {
             // Use Itertools to make combinations of n letters out of the set of higher value letters (0 < n <= number of higher value letters)
             let higher_value_letters_iter = higher_value_letters.iter().combinations(n);
     
             // Put excess points contributions of the higher value letters in a vector and sum them
             for letter_combination in higher_value_letters_iter {
-                let mut points_vec = Vec::new();
         
-                for letter in letter_combination.iter() {
-                    let excess_points = *scrabble_points.get(letter).unwrap() - 1;
-                    points_vec.push(excess_points);
-                }
-        
-                let excess_sum = points_vec.iter().sum::<i32>();
+                let excess_points_vector: Vec<_> = letter_combination
+                .iter()
+                .map(|letter| scrabble_points.get(letter).unwrap() - 1)
+                .collect();
+
+                let excess_points_sum = excess_points_vector.iter().sum::<i32>();
     
                 // Check excess points against points in the first word
-                if excess_sum == self.first_word_points - self.first_word_length {
+                if excess_points_sum == self.first_word_points - self.first_word_length {
+                    
                     // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
                     let mut no_duplicate = true;
                     
@@ -42,7 +42,7 @@ impl Combination {
                         }
                     }
 
-                    // Pop new combinations in the vector!
+                    // Add new combinations to the vector!
                     if no_duplicate {
                         higher_value_letter_combinations.push(letter_combination);
                     }
@@ -138,7 +138,7 @@ Your 20 letters for today are:
         let points = *scrabble_points.get(letter).unwrap();
 
         if points != 1 {
-            higher_value_letters.push(letter);
+            higher_value_letters.push(*letter);
         }
     }
 
