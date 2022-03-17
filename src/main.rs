@@ -1,3 +1,4 @@
+use chrono::{NaiveTime, Local};
 use itertools::Itertools;
 use std::collections::HashMap;
 
@@ -9,8 +10,9 @@ struct Combination {
     second_word_points: i32,
 }
 
-// Monster method to find valid higher value letters combinations in the first (longer) word
-// Takes the vector of higher value letters and the HashMap of Scrabble points as arguments because fudge
+// Method to find valid higher value letters combinations in the first (longer) word
+// Takes the vector of higher value letters and the HashMap of Scrabble points as arguments
+// There has to be a better way!
 impl Combination {
     fn find_higher_value_letter_combinations(&self, higher_value_letters: &Vec<char>, scrabble_points: &HashMap<char, i32>) {
         // Vector to hold the combinations
@@ -76,10 +78,26 @@ fn main() {
         panic!("Provide valid Scrabble characters");
     }
 
-    // Display verified 20 letter input to user
+    // Use local time to display an appropriate greeting
+    let current_time: NaiveTime = Local::now().time();
+
+    let end_morning: NaiveTime = NaiveTime::from_hms(12, 0, 0);
+    let end_afternoon: NaiveTime = NaiveTime::from_hms(18, 0, 0);
+
+    let mut greeting = String::new();
+
+    if current_time < end_morning {
+        greeting = String::from("Good morning!");
+    } else if current_time < end_afternoon {
+        greeting = String::from("Good afternoon!");
+    } else {
+        greeting = String::from("Good evening!");
+    }
+
+    // Display validated 20 letter input to user
     println!(
         "
-Good morning!
+{greeting}
 
 Your 20 letters for today are:
 {}
