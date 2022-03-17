@@ -63,7 +63,7 @@ fn main() {
 
     // Take user input, e.g. letters separated by spaces
     // User input not currently implemented
-    let letters = String::from("a a a b c d e e i m m m n n r r s s t y").to_lowercase();
+    let letters = String::from("a c d e e e e f i l l o o p r r s t t t").to_lowercase();
 
     // Turn input string into a vector of characters
     let letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
@@ -84,14 +84,12 @@ fn main() {
     let end_morning: NaiveTime = NaiveTime::from_hms(12, 0, 0);
     let end_afternoon: NaiveTime = NaiveTime::from_hms(18, 0, 0);
 
-    let mut greeting = String::new();
+    let mut greeting = String::from("Good evening!");
 
     if current_time < end_morning {
         greeting = String::from("Good morning!");
     } else if current_time < end_afternoon {
         greeting = String::from("Good afternoon!");
-    } else {
-        greeting = String::from("Good evening!");
     }
 
     // Display validated 20 letter input to user
@@ -168,7 +166,7 @@ Your 20 letters for today are:
     let points_over_min = points_vector.iter().copied().sum::<i32>() - 20;
 
     // Take user input of maximum score for the day
-    let max_score = 352;
+    let max_score = 320;
 
     println!(
         "Today's maximum score is: {max_score}
@@ -208,8 +206,13 @@ Your 20 letters for today are:
 
 
     // Display combinations found to user
+    let mut combination_s = String::from("combinations");
+    if combinations_vector.len() == 1 {
+        combination_s = String::from("combination");
+    }
+
     println!(
-        "Found {} possible combinations today:",
+        "Found {} possible {combination_s} today:",
         combinations_vector.len()
     );
     println!();
