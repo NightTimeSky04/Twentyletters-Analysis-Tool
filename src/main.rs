@@ -14,7 +14,7 @@ struct Combination {
 // Takes the vector of higher value letters and the HashMap of Scrabble points as arguments
 // There has to be a better way!
 impl Combination {
-    fn find_higher_value_letter_combinations(&self, higher_value_letters: &Vec<char>, scrabble_points: &HashMap<char, i32>) {
+    fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char], scrabble_points: &HashMap<char, i32>) {
         // Vector to hold the combinations
         let mut higher_value_letter_combinations: Vec<Vec<&char>> = Vec::new();
 
@@ -63,10 +63,11 @@ fn main() {
 
     // Take user input, e.g. letters separated by spaces
     // User input not currently implemented
-    let letters = String::from("a c d e e e e f i l l o o p r r s t t t").to_lowercase();
+    let letters = String::from("a a d d e e e e h i l n o p p r r s t w").to_lowercase();
 
     // Turn input string into a vector of characters
-    let letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
+    let mut letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
+    letters_vector.sort_unstable();
 
     // Have we been provided 20 characters?
     if letters_vector.len() != 20 {
@@ -163,10 +164,11 @@ Your 20 letters for today are:
     */
 
     // Find points over minimum (where minimum is 20, i.e. all letters are worth 1 point)
-    let points_over_min = points_vector.iter().copied().sum::<i32>() - 20;
+    let total_points: i32 = points_vector.iter().copied().sum();
+    let points_over_min = total_points - 20;
 
     // Take user input of maximum score for the day
-    let max_score = 320;
+    let max_score = 350;
 
     println!(
         "Today's maximum score is: {max_score}
@@ -179,31 +181,34 @@ Your 20 letters for today are:
 
     // Find length and points combinations equal to maximum score, by iterating over all possible combinations of word lengths and points
     // This assumes no more than 2 words in the solution
-    let first_word_lengths = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
+    if total_points*20 == max_score {
+        println!("Today's solution is a single 20 letter word.");
+    } else {    
+        let first_word_lengths = vec![10, 11, 12, 13, 14, 15, 16, 17, 20];
 
-    for first_word_length in first_word_lengths {
-        let second_word_length = 20 - first_word_length;
-        let first_word_points_iter = first_word_length..=(first_word_length + points_over_min);
+        for first_word_length in first_word_lengths {
+            let second_word_length = 20 - first_word_length;
+            let first_word_points_iter = first_word_length..=(first_word_length + points_over_min);
 
-        for first_word_points in first_word_points_iter {
-            let second_word_points = 20 + points_over_min - first_word_points;
-            let total_score =
-                (first_word_length * first_word_points) + (second_word_length * second_word_points);
+            for first_word_points in first_word_points_iter {
+                let second_word_points = 20 + points_over_min - first_word_points;
+                let total_score =
+                    (first_word_length * first_word_points) + (second_word_length * second_word_points);
 
-            if total_score == max_score {
-                // Store possible maximum score combinations as instances of `Combination` in a vector
-                let possible_combination = Combination {
-                    first_word_length,
-                    first_word_points,
-                    second_word_length,
-                    second_word_points,
-                };
+                if total_score == max_score {
+                    // Store possible maximum score combinations as instances of `Combination` in a vector
+                    let possible_combination = Combination {
+                        first_word_length,
+                        first_word_points,
+                        second_word_length,
+                        second_word_points,
+                    };
 
-                combinations_vector.push(possible_combination);
+                    combinations_vector.push(possible_combination);
+                }
             }
         }
     }
-
 
     // Display combinations found to user
     let mut combination_s = String::from("combinations");
@@ -242,7 +247,7 @@ Your 20 letters for today are:
 }
 
 // Function to convert vector of chars to a string of uppercase letters separated by spaces
-fn display_letters(letters_vector: &Vec<char>) -> String {
+fn display_letters(letters_vector: &[char]) -> String {
     let mut letter_display = String::with_capacity(20 * std::mem::size_of::<char>());
 
     for letter in letters_vector {
