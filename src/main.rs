@@ -16,7 +16,7 @@ struct Combination {
 impl Combination {
     fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char], scrabble_points: &HashMap<char, i32>) {
         // Vector to hold the combinations
-        let mut higher_value_letter_combinations: Vec<Vec<&char>> = Vec::new();
+        let mut higher_value_letter_combinations: Vec<Vec<char>> = Vec::new();
 
         for n in 1..=higher_value_letters.len() {
             // Use Itertools to make combinations of n letters out of the set of higher value letters (0 < n <= number of higher value letters)
@@ -24,8 +24,11 @@ impl Combination {
     
             // Put excess points contributions of the higher value letters in a vector and sum them
             for letter_combination in higher_value_letters_iter {
+
+                // chars in the vector get dereferenced here, mostly so we can print them without hassle
+                let letter_combination_deref: Vec<char> = letter_combination.iter().map(|a| **a).collect();
         
-                let excess_points_vector: Vec<_> = letter_combination
+                let excess_points_vector: Vec<_> = letter_combination_deref
                 .iter()
                 .map(|letter| scrabble_points.get(letter).unwrap() - 1)
                 .collect();
@@ -39,22 +42,23 @@ impl Combination {
                     let mut no_duplicate = true;
                     
                     for combination in higher_value_letter_combinations.iter() {
-                        if combination == &letter_combination {
+                        if combination == &letter_combination_deref {
                             no_duplicate = false;
                         }
                     }
 
                     // Add new combinations to the vector!
                     if no_duplicate {
-                        higher_value_letter_combinations.push(letter_combination);
+                        higher_value_letter_combinations.push(letter_combination_deref);
                     }
                 }
             }
         }
     
         // Print the letter combinations for the user
+        println!("  With the following possible higher value letter combinations:");
         for combination in higher_value_letter_combinations.iter() {
-            println!("{combination:?}");
+            println!("    {}", display_letters(combination));
         }
     }
 }
