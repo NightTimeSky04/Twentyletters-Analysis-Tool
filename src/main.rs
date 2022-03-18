@@ -20,37 +20,28 @@ impl Combination {
 
         for n in 1..=higher_value_letters.len() {
             // Use Itertools to make combinations of n letters out of the set of higher value letters (0 < n <= number of higher value letters)
-            let higher_value_letters_iter = higher_value_letters.iter().combinations(n);
+            let higher_value_letters_iter = higher_value_letters.iter().copied().combinations(n);
     
             // Put excess points contributions of the higher value letters in a vector and sum them
-            for letter_combination in higher_value_letters_iter {
-
-                // chars in the vector get dereferenced here, mostly so we can print them without hassle
-                let letter_combination_deref: Vec<char> = letter_combination.iter().map(|a| **a).collect();
+            'n_letter_combination_loop: for letter_combination in higher_value_letters_iter {
         
-                let excess_points_vector: Vec<_> = letter_combination_deref
+                let excess_points = letter_combination
                 .iter()
-                .map(|letter| scrabble_points.get(letter).unwrap() - 1)
-                .collect();
+                .map(|letter| scrabble_points.get(letter).unwrap() - 1);
 
-                let excess_points_sum = excess_points_vector.iter().sum::<i32>();
+                let excess_points_sum = excess_points.sum::<i32>();
     
                 // Check excess points against points in the first word
                 if excess_points_sum == self.first_word_points - self.first_word_length {
 
                     // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
-                    let mut no_duplicate = true;
-                    
                     for combination in higher_value_letter_combinations.iter() {
-                        if combination == &letter_combination_deref {
-                            no_duplicate = false;
+                        if combination == &letter_combination {
+                            continue 'n_letter_combination_loop; // skip to next iteration if current combination is a duplicate
                         }
                     }
 
-                    // Add new combinations to the vector!
-                    if no_duplicate {
-                        higher_value_letter_combinations.push(letter_combination_deref);
-                    }
+                    higher_value_letter_combinations.push(letter_combination);
                 }
             }
         }
