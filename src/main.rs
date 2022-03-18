@@ -1,6 +1,7 @@
 use chrono::{NaiveTime, Local};
 use itertools::Itertools;
 use std::collections::HashMap;
+use lazy_static::lazy_static;
 
 // Struct to hold possible letters and points combinations
 struct Combination {
@@ -10,11 +11,44 @@ struct Combination {
     second_word_points: i32,
 }
 
+// Static HashMap for Scrabble points values
+lazy_static!{
+    static ref SCRABBLE_POINTS: HashMap<char, i32> = {
+        HashMap::from([
+            ('a', 1),
+            ('b', 3),
+            ('c', 3),
+            ('d', 2),
+            ('e', 1),
+            ('f', 4),
+            ('g', 2),
+            ('h', 4),
+            ('i', 1),
+            ('j', 8),
+            ('k', 5),
+            ('l', 1),
+            ('m', 3),
+            ('n', 1),
+            ('o', 1),
+            ('p', 3),
+            ('q', 10),
+            ('r', 1),
+            ('s', 1),
+            ('t', 1),
+            ('u', 1),
+            ('v', 4),
+            ('w', 4),
+            ('x', 8),
+            ('y', 4),
+            ('z', 10),])
+    };
+}
+
 // Method to find valid higher value letters combinations in the first (longer) word
 // Takes the vector of higher value letters and the HashMap of Scrabble points as arguments
 // There has to be a better way!
 impl Combination {
-    fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char], scrabble_points: &HashMap<char, i32>) {
+    fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char]) {
         // Vector to hold the combinations
         let mut higher_value_letter_combinations: Vec<Vec<char>> = Vec::new();
 
@@ -27,7 +61,7 @@ impl Combination {
         
                 let excess_points = letter_combination
                 .iter()
-                .map(|letter| scrabble_points.get(letter).unwrap() - 1);
+                .map(|letter| SCRABBLE_POINTS.get(letter).unwrap() - 1);
 
                 let excess_points_sum = excess_points.sum::<i32>();
     
@@ -99,40 +133,10 @@ Your 20 letters for today are:
     );
 
     // Map characters to Scrabble points values
-    let scrabble_points: HashMap<char, i32> = HashMap::from([
-        ('a', 1),
-        ('b', 3),
-        ('c', 3),
-        ('d', 2),
-        ('e', 1),
-        ('f', 4),
-        ('g', 2),
-        ('h', 4),
-        ('i', 1),
-        ('j', 8),
-        ('k', 5),
-        ('l', 1),
-        ('m', 3),
-        ('n', 1),
-        ('o', 1),
-        ('p', 3),
-        ('q', 10),
-        ('r', 1),
-        ('s', 1),
-        ('t', 1),
-        ('u', 1),
-        ('v', 4),
-        ('w', 4),
-        ('x', 8),
-        ('y', 4),
-        ('z', 10),
-    ]);
-
     // Create vector of relevant Scrabble points values
-
     let points_vector: Vec<_> = letters_vector
         .iter()
-        .map(|letter| scrabble_points.get(letter).unwrap())
+        .map(|letter| SCRABBLE_POINTS.get(letter).unwrap())
         .collect();
   
     // ...and vector of letters with points value > 1
@@ -140,7 +144,7 @@ Your 20 letters for today are:
     let mut higher_value_letters = Vec::new();
 
     for letter in letters_vector.iter() {
-        let points = *scrabble_points.get(letter).unwrap();
+        let points = *SCRABBLE_POINTS.get(letter).unwrap();
 
         if points != 1 {
             higher_value_letters.push(*letter);
@@ -224,7 +228,7 @@ Your 20 letters for today are:
             combination.first_word_points,
             combination.first_word_length * combination.first_word_points
         );
-        combination.find_higher_value_letter_combinations(&higher_value_letters, &scrabble_points);
+        combination.find_higher_value_letter_combinations(&higher_value_letters);
         println!("and");
         println!(
             "{} letters worth {} points (scoring {})",
