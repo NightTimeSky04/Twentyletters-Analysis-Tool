@@ -48,18 +48,20 @@ lazy_static!{
 // Takes the vector of higher value letters and the HashMap of Scrabble points as arguments
 // There has to be a better way!
 impl Combination {
-    fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char]) {
-        // Vector to hold the combinations
-        let mut higher_value_letter_combinations: Vec<Vec<char>> = Vec::new();
+    fn find_higher_value_letter_combinations(&self, higher_value_letters: &[char]) -> (Vec<Vec<char>>, Vec<Vec<char>>) {
+
+        // Vectors to hold the combinations
+        let mut first_word_letter_combinations: Vec<Vec<char>> = Vec::new();
+        let mut second_word_letter_combinations: Vec<Vec<char>> = Vec::new();
 
         for n in 1..=higher_value_letters.len() {
             // Use Itertools to make combinations of n letters out of the set of higher value letters (0 < n <= number of higher value letters)
-            let higher_value_letters_iter = higher_value_letters.iter().copied().combinations(n);
+            let n_higher_value_letters_iter = higher_value_letters.iter().copied().combinations(n);
     
             // Put excess points contributions of the higher value letters in a vector and sum them
-            'n_letter_combination_loop: for letter_combination in higher_value_letters_iter {
+            'n_letter_combinations: for n_letter_combination in n_higher_value_letters_iter {
         
-                let excess_points = letter_combination
+                let excess_points = n_letter_combination
                 .iter()
                 .map(|letter| SCRABBLE_POINTS.get(letter).unwrap() - 1);
 
@@ -69,22 +71,30 @@ impl Combination {
                 if excess_points_sum == self.first_word_points - self.first_word_length {
 
                     // Check if letter combination has already been identified (this happens when there are repeats in the 20 letters)
-                    for combination in higher_value_letter_combinations.iter() {
-                        if combination == &letter_combination {
-                            continue 'n_letter_combination_loop; // skip to next iteration if current combination is a duplicate
+                    for combination in first_word_letter_combinations.iter() {
+                        if combination == &n_letter_combination {
+                            continue 'n_letter_combinations; // skip to next iteration if current combination is a duplicate
                         }
                     }
 
-                    higher_value_letter_combinations.push(letter_combination);
+                    let mut remaining_letters = higher_value_letters.to_vec();
+
+                    'first_word_letters: for first_word_letter in n_letter_combination.iter() {
+                        for (index, remaining_letter) in remaining_letters.iter().enumerate() {
+                            if first_word_letter == remaining_letter {
+                                remaining_letters.remove(index);
+                                continue 'first_word_letters
+                            }
+                        }
+                    }
+                    
+                    first_word_letter_combinations.push(n_letter_combination);
+                    second_word_letter_combinations.push(remaining_letters);
                 }
             }
         }
-    
-        // Print the letter combinations for the user
-        println!("  With the following possible higher value letter combinations:");
-        for combination in higher_value_letter_combinations.iter() {
-            println!("    {}", display_letters(combination));
-        }
+
+        (first_word_letter_combinations, second_word_letter_combinations)
     }
 }
 
@@ -92,7 +102,7 @@ fn main() {
 
     // Take user input, e.g. letters separated by spaces
     // User input not currently implemented
-    let letters = String::from("a a d d e e e e h i l n o p p r r s t w").to_lowercase();
+    let letters = String::from("a a c d d e e e g i n n n o r t t u v y").to_lowercase();
 
     // Turn input string into a vector of characters
     let mut letters_vector: Vec<_> = letters.split_whitespace().flat_map(str::chars).collect();
@@ -167,7 +177,7 @@ Your 20 letters for today are:
     let points_over_min = total_points - 20;
 
     // Take user input of maximum score for the day
-    let max_score = 350;
+    let max_score = 320;
 
     println!(
         "Today's maximum score is: {max_score}
@@ -222,13 +232,20 @@ Your 20 letters for today are:
     println!();
 
     for (index, combination) in combinations_vector.iter().enumerate() {
+        let (first_word_letter_combinations, second_word_letter_combinations) = combination.find_higher_value_letter_combinations(&higher_value_letters);
+
         println!(
             "{} letters worth {} points (scoring {})",
             combination.first_word_length,
             combination.first_word_points,
             combination.first_word_length * combination.first_word_points
         );
-        combination.find_higher_value_letter_combinations(&higher_value_letters);
+
+        println!("  With the following possible higher value letter combinations:");
+        for letter_combination in first_word_letter_combinations.iter() {
+            println!("    {}", display_letters(letter_combination));
+        }
+
         println!("and");
         println!(
             "{} letters worth {} points (scoring {})",
@@ -236,6 +253,12 @@ Your 20 letters for today are:
             combination.second_word_points,
             combination.second_word_length * combination.second_word_points
         );
+
+        println!("  With the following possible higher value letter combinations:");
+        for letter_combination in second_word_letter_combinations.iter() {
+            println!("    {}", display_letters(letter_combination));
+        }
+
         println!();
 
         if index != combinations_vector.len() - 1 {
